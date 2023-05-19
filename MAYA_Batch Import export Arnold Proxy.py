@@ -1,4 +1,3 @@
-# v2版本 更新了导入代理后将代理的shape节点名称改为代理名称加Shape后缀
 # 导入maya和arnold的模块
 import maya.cmds as cmds
 import mtoa.core as core
