@@ -9,10 +9,12 @@ def create_window():
     # 检查是否已经存在同名的窗口，如果有就删除
     if cmds.window('window', ex=True):
         cmds.deleteUI('window')
-    window = cmds.window('window', t=u'收拾收拾', widthHeight=(300, 400))
+    window = cmds.window('window', t=u'ar代理工具集', widthHeight=(300, 400))
 
     # 创建一个布局
     layout = cmds.columnLayout(adjustableColumn=True)
+
+    framea = cmds.frameLayout(label="批量导入导出代理模块")
 
     # 创建一个文本标签，提示用户输入文件夹路径
     label = cmds.text(label="请输入你要导出代理文件的文件夹路径:")
@@ -69,6 +71,10 @@ def batch_import_arnold_proxy():
     # 使用列表推导式来筛选出以.ass结尾的文件名称，并使用os.path.join函数来拼接完整的文件路径
     filelist = [os.path.join(folder, fname) for fname in filelist if os.path.splitext(fname)[1] == ".ass"]
     transform_nodes = []
+
+    if not cmds.objExists("ArnoldStandInDefaultLightSet"):
+        cmds.sets(name="ArnoldStandInDefaultLightSet", empty=True)
+
         # 遍历文件列表
     for file in filelist:
         # 创建一个arnold代理节点
@@ -102,6 +108,8 @@ def batch_import_arnold_proxy():
 
         # 重命名shape节点名称
         cmds.rename(backplate, fileshapename)
+
+        cmds.sets(mod, forceElement="ArnoldStandInDefaultLightSet")
 
 
     return transform_nodes
