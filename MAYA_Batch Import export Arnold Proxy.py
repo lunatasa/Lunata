@@ -7,12 +7,9 @@ folder_field = []
 
 def create_window():
     # 检查是否已经存在同名的窗口，如果有就删除
-    window_name = "批量导入导出ar代理"
-    if cmds.window(window_name, exists=True):
-        cmds.deleteUI(window_name, window=True)
-
-    # 创建一个窗口
-    window = cmds.window(title=window_name, widthHeight=(300, 200))
+    if cmds.window('window', ex=True):
+        cmds.deleteUI('window')
+    window = cmds.window('window', t=u'收拾收拾', widthHeight=(300, 400))
 
     # 创建一个布局
     layout = cmds.columnLayout(adjustableColumn=True)
@@ -34,10 +31,30 @@ def create_window():
     folder_field = cmds.textField(placeholderText="")
 
     # 创建一个按钮，用于执行导入代理模型的函数
-    button = cmds.button(label="Import", command=lambda x: batch_import_arnold_proxy())
+    button = cmds.button(label="Import", command="batch_import_arnold_proxy()")
 
+    # 创建一个布局
+    layout = cmds.columnLayout(adjustableColumn=True)
+    frame = cmds.frameLayout(label="修改代理模式模块")
+    label = cmds.text(label="选择你要更改的代理模式:")
 
-    # 显示窗口
+    # 创建一排按钮，用来选择代理模式
+    cmds.setParent(frame)
+    cmds.rowLayout(numberOfColumns=2)
+    button = cmds.button(label="Bounding Box", command="modchange(0)")
+    button = cmds.button(label="per Object Bounding Box", command="modchange(1)")
+
+    cmds.setParent(frame)
+    cmds.rowLayout(numberOfColumns=3)
+    button = cmds.button(label="Polywire", command="modchange(2)")
+    button = cmds.button(label="Wireframe", command="modchange(3)")
+    button = cmds.button(label="Point Cloud", command="modchange(4)")
+
+    cmds.setParent(frame)
+    cmds.rowLayout(numberOfColumns=2)
+    button = cmds.button(label="Shaded Polywire", command="modchange(5)")
+    button = cmds.button(label="Shaded", command="modchange(6)")
+
     cmds.showWindow(window)
 
 
@@ -106,6 +123,13 @@ def export_proxy():
         cmds.arnoldExportAss(f=proxy_file, mask=223, lightLinks=0, compressed=False, boundingBox=True, shadowLinks=0, s=True)
         # 恢复原来的选择
         cmds.select(selection)
+
+def modchange(v):
+    # 获取选中的模型
+    selected = cmds.ls(selection=True)
+    # 批量修改选中的模型
+    for obj in selected:
+        cmds.setAttr(obj + '.mode', v)
 
 #调用窗口函数
 create_window()
